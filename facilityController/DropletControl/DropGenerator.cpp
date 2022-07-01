@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "DropGenerator.h"
-#include <digitalWriteFast.h>
+// #include <digitalWriteFast.h>
 
 #define pinOrange 6
 #define pinBrown 7
@@ -10,66 +10,66 @@
 
 DropGenerator::DropGenerator()
 {
-  pinModeFast(pinOrange, OUTPUT);
-  pinModeFast(pinBrown, OUTPUT);
-  pinModeFast(pinBlue, OUTPUT);
-  pinModeFast(pinGreen, OUTPUT);
+  pinMode(pinOrange, OUTPUT);
+  pinMode(pinBrown, OUTPUT);
+  pinMode(pinBlue, OUTPUT);
+  pinMode(pinGreen, OUTPUT);
 }
 
 void DropGenerator::oneDrop(int impulseTime)
 {
   // OPEN NOZZLE - IMPULSE UP: piezo element's power on
   // black wire - power on
-  digitalWriteFast(pinBlue, HIGH);
+  digitalWrite(pinBlue, HIGH);
   // red wire - to ground
-  digitalWriteFast(pinGreen, HIGH);
+  digitalWrite(pinGreen, HIGH);
   // Hold piezo element's power on during impulse time (black wire ON!)
-  delayMicroseconds(impulseTime); 
+  delay(impulseTime); 
   
   // CLOSE NOZZLE - IMPULSE DOWN: piezo element's power off
   // black wire - power off
-  digitalWriteFast(pinBlue, LOW);
+  digitalWrite(pinBlue, LOW);
   // black wire - to ground (piezo element's discharge)
-  digitalWriteFast(pinBrown, HIGH);
+  digitalWrite(pinBrown, HIGH);
   // Hold on piezo element's connection to ground
-  delayMicroseconds(5000);
+  delay(5);
   // Unplug black and red wires from ground
-  digitalWriteFast(pinGreen, LOW);
-  digitalWriteFast(pinBrown, LOW);
+  digitalWrite(pinGreen, LOW);
+  digitalWrite(pinBrown, LOW);
   // Hold on piezo element without connection
   delay(10);//ms
   
   // REVERSE IMPULSE - UP: change piezo element's connection for total discharging
   // red wire - power on
-  digitalWriteFast(pinOrange, HIGH);
+  digitalWrite(pinOrange, HIGH);
   // black wire - to ground
-  digitalWriteFast(pinBrown, HIGH);
+  digitalWrite(pinBrown, HIGH);
   // Hold piezo element's reverse power on (red wire ON!)
-  delayMicroseconds(5000);
+  delay(5);
 
   // REVERSE IMPULSE - DOWN: piezo element's reversed power off
   // red wire - power off
-  digitalWriteFast(pinOrange, LOW);
+  digitalWrite(pinOrange, LOW);
   // red wire - to ground (piezo element's discharge)
-  digitalWriteFast(pinGreen, HIGH);
+  digitalWrite(pinGreen, HIGH);
   // Hold on piezo element's connection to ground
-  delayMicroseconds(5000);
+  delay(5);
   // Unplug black and red wires from ground
-  digitalWriteFast(pinBrown, LOW);
-  digitalWriteFast(pinGreen, LOW);
+  digitalWrite(pinBrown, LOW);
+  digitalWrite(pinGreen, LOW);
 }
 
-// microImpulseTime, macroImpulseTime, betweenImpulsesTime, us; 
-void DropGenerator::largeDropPreparing(int microImpulseCount, int microImpulseTime, int betweenImpulsesTime)
+// miniImpulseTime, betweenImpulsesTime, ms; 
+void DropGenerator::largeDropPreparing(int miniImpulseCount, int miniImpulseTime, int betweenImpulsesTime)
 {
   // init impulse counter
   int r = 0;
 
-  // generate micro impulses
-  while(r<microImpulseCount)
+  // generate mini impulses
+  while(r<miniImpulseCount)
   {
-    oneDrop(microImpulseTime);
-    delayMicroseconds(betweenImpulsesTime);
+    oneDrop(miniImpulseTime);
+    delay(betweenImpulsesTime);
     r++;
   }
 }
