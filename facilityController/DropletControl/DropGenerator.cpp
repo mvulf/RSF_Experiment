@@ -18,6 +18,12 @@ DropGenerator::DropGenerator()
 
 void DropGenerator::oneDrop(int impulseTime)
 {
+  // init - LOW
+  digitalWrite(pinBlue, LOW);
+  digitalWrite(pinGreen, LOW);
+  digitalWrite(pinBrown, LOW);
+  digitalWrite(pinOrange, LOW);
+  
   // OPEN NOZZLE - IMPULSE UP: piezo element's power on
   // black wire - power on
   digitalWrite(pinBlue, HIGH);

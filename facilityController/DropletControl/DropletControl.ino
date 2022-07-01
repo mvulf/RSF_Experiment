@@ -17,10 +17,12 @@ const unsigned long MAX_RECORD_TIME = 60000; // record time WAS: MAX_FREEZING_TI
 DHT dht(DHTPIN, DHT22);
 
 // droplet generating parameters
-int impulseCount = 50; // count of mini impulses
-int miniImpulseTime = 4; // time of mini impulse, ms
+int impulseCount = 25; // count of mini impulses
+int miniImpulseTime = 5; // time of mini impulse, ms
 int betweenImpulseTime = 5; // time between impulses, ms
 int largeImpulseTime = 12; // time of large impulse, ms
+
+int openImpulseTime = 2000; // time of openning, ms
 
 int incomingByte = 0; // for incoming data
 String testName;
@@ -68,6 +70,7 @@ void setup() {
   }
 
 void loop() {
+  // open nozzle for taking syringe up - "u"
   // generate droplets by command "g"
   // turn on/off the light by command "l"
   // get humidity and ambient temperature by command "h"
@@ -224,6 +227,17 @@ void loop() {
         Serial.print(largeImpulseTime);
         Serial.print(",");
         Serial.println(betweenImpulseTime);
+    }
+
+    // RETURN SYRINGE UP
+    if (incomingByte == 117) // letter 'u'
+    {
+      // Open-close nozzle
+      Serial.print(millis());
+      Serial.println(". Open nozzle");
+      dropGenerator.oneDrop(openImpulseTime);
+      Serial.print(millis());
+      Serial.println(". Close nozzle");
     }
   }
   
