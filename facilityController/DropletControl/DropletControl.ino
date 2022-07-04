@@ -10,6 +10,7 @@
 #define pinPhotron 12 // photron-trigger WAS: pinCam
 #define pinBaumer 2 // synchro LED WAS: pinLED 
 
+const int BAUMER_FPS = 60; // Baumer recording fps
 const int LIGHT_BRIGHTENING_TIME = 3500; // light increasing time
 const unsigned long MAX_RECORD_TIME = 60000; // record time WAS: MAX_FREEZING_TIME
 
@@ -24,12 +25,15 @@ int largeImpulseTime = 12; // time of large impulse, ms
 
 int openImpulseTime = 2000; // time of openning, ms
 
+int baumerDelay = 1000 / 2*BAUMER_FPS; // One-half delay for recording, ms
+
 int incomingByte = 0; // for incoming data
 String testName;
 
 char generatingValues[90];
 
 unsigned long checkMillis; // time variable
+unsigned long baumerCheckMillis; // time variable
 boolean flagLED; // LED switching flag
 
 boolean flagMeasure = false; // Provide full measurement
@@ -67,6 +71,8 @@ void setup() {
   Serial.print(largeImpulseTime);
   Serial.print(",");
   Serial.println(betweenImpulseTime);
+
+  
   }
 
 void loop() {
@@ -313,8 +319,17 @@ void loop() {
     delay(1);
     digitalWrite(pinPhotron,LOW);
 
+    // BAUMER-RECORD
+    Serial.print(millis());
+    Serial.print(". Baumer recording start with one-half delay, ms: ");
+    Serial.println(baumerDelay);
     while (millis()-checkMillis < MAX_RECORD_TIME)
     {
+      digitalWrite(pinBaumer, HIGH);
+      delay(baumerDelay);
+      digitalWrite(pinBaumer, LOW);
+      baumerCheckMillis = millis();
+      
       // CHECK STOP COMMAND
       if (Serial.available() > 0)
       {
@@ -327,6 +342,10 @@ void loop() {
           break;
         }
       }
+      
+      while (millis()-baumerCheckMillis < baumerDelay-1)
+      {
+        }
     }
       
     // Switch of the light.
