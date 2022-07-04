@@ -25,7 +25,7 @@ int largeImpulseTime = 12; // time of large impulse, ms
 
 int openImpulseTime = 2000; // time of openning, ms
 
-int baumerDelay = 1000 / 2*BAUMER_FPS; // One-half delay for recording, ms
+int baumerDelay = 1000 / (2*BAUMER_FPS); // One-half delay for recording, ms
 
 int incomingByte = 0; // for incoming data
 String testName;
@@ -283,6 +283,7 @@ void loop() {
       chamber_tempr = dht.readTemperature();
 
       //print humidity and thermo values
+      Serial.print(millis());
       Serial.print(",");
       Serial.print(chamber_tempr);
       Serial.print(",");
@@ -321,7 +322,9 @@ void loop() {
 
     // BAUMER-RECORD
     Serial.print(millis());
-    Serial.print(". Baumer recording start with one-half delay, ms: ");
+    Serial.print(". Baumer recording start with FPS: ");
+    Serial.print(BAUMER_FPS);
+    Serial.print("; one-half delay, ms: ");
     Serial.println(baumerDelay);
     while (millis()-checkMillis < MAX_RECORD_TIME)
     {
